@@ -1,3 +1,7 @@
+class State:
+    def __init__(self, name):
+        self.name = name
+
 class NFA:
     def __init__(self):
         self.states = set()
@@ -19,43 +23,17 @@ class NFA:
     def is_accept_state(self, state):
         return state in self.accept_states
 
+    def delta(self, current_state, symbol):
+        return self.transitions.get((current_state, symbol), set())
+
     def simulate(self, input_string):
-        current_states = {self.start_state}
+        current_state = self.start_state
 
         for symbol in input_string:
-            next_states = set()
-            for state in current_states:
-                transitions = self.transitions.get((state, symbol), set())
-                next_states = next_states.union(transitions)
-            current_states = next_states
+            current_state = self.delta(current_state, symbol)
+            if not current_state:
+                return False
 
-        for state in current_states:
-            if self.is_accept_state(state):
-                return True
-        return False
+        return self.is_accept_state(current_state)
 
 
-# TESTING CENTER
-nfa = NFA()
-
-# Add states
-nfa.add_state("q0", accept_state=True)
-nfa.add_state("q1")
-nfa.add_state("q2", accept_state=True)
-
-# Add transitions
-nfa.add_transition("q0", 'a', "q1")
-nfa.add_transition("q1", 'b', "q2")
-nfa.add_transition("q2", 'a', "q0")
-
-# Set start state
-nfa.set_start_state("q0")
-
-# Test strings
-test_strings = ["ab", "aba", "abab", "aaab"]
-
-for test_string in test_strings:
-    if nfa.simulate(test_string):
-        print(f"String '{test_string}' is accepted")
-    else:
-        print(f"String '{test_string}' is rejected.")
