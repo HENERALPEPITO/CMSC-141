@@ -63,6 +63,14 @@ class ENFA(NFA):
             current_states = next_states
 
         return any(self.is_accept_state(state) for state in current_states)
+    
+
+    def print_transitions_and_states(self):
+        print("Transitions:")
+        for (from_state, symbol), to_states in self.transitions.items():
+            for to_state in to_states:
+                symbol_str = symbol if symbol else 'ε'
+                print(f"d({from_state.name}, {symbol_str}) = {to_state.name}")
 
 
 # TESTING CENTER
@@ -95,3 +103,5 @@ for test_string in test_strings:
         print(f"String '{test_string}' is accepted.")
     else:
         print(f"String '{test_string}' is rejected.")
+
+enfa.print_transitions_and_states()
